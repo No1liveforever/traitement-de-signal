@@ -1,0 +1,39 @@
+clear all
+clc
+close all
+clear all
+close all
+clc
+% Sauvegarde de ecg
+load 'ecg.mat'
+%Traçons le signal en fonction du temps
+F=500;
+T =1/F;
+N=length(ecg);
+t = (0:N-1)*T;
+% plot(t,ecg)
+
+ fe = (0:N-1)*F;
+spectre_ecg = fft(ecg);
+% plot(fe,spectre_ecg)
+
+
+%pass_haut_ideal 
+pass_haut_ideal = zeros(size(ecg));
+fc = 0.5;
+indexe_fc = ceil((fc*N)/F);
+pass_haut_ideal(1:indexe_fc) = 0;
+pass_haut_ideal(indexe_fc+1:N) = 0;
+
+%filtrage
+spectre_ecg_filtre = pass_haut_ideal.*spectre_ecg;
+ecg1 = ifft(spectre_ecg_filtre,'symmetric');
+
+fshift=(-N/2:N/2-1)*(F/N);
+plot(fshift,fftshift(abs(fft(ecg1))));
+
+
+hold on
+plot(t,ecg1);
+plot(t,ecg)
+hold off
